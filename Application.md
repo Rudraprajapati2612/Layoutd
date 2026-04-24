@@ -1,7 +1,7 @@
 # layoutd — Solana Foundation India Grant Application
 
 > Companion source-of-truth for the Superteam Earn India grant form.
-> Form path: Basics → Details → Milestones.
+> Form path: **Basics → Details → Milestones**
 
 ---
 
@@ -10,10 +10,10 @@
 | Field | Answer |
 |---|---|
 | **Project Title** | layoutd |
-| **One-Liner Description** | A CLI that auto-generates safe account-layout migration code for Solana program upgrades — diff two Anchor IDLs, get a verified `.migrate()` body, catch zero-copy hazards before they hit mainnet. |
+| **One-Liner** | A CLI that auto-generates safe account-layout migration code for Solana program upgrades — diff two Anchor IDLs, get a verified `.migrate()` body, catch zero-copy hazards before they hit mainnet. |
 | **Grant Amount** | 5,000 USDG |
-| **Telegram Username** | RudraOnSolana |
-| **Solana Wallet Address** | r8V9yov1eJcX7EDFxkSzqtiUSvSSfESGnjaYaaYk7Qu |
+| **Telegram** | RudraOnSolana |
+| **Solana Wallet** | `r8V9yov1eJcX7EDFxkSzqtiUSvSSfESGnjaYaaYk7Qu` |
 
 ---
 
@@ -28,11 +28,21 @@ Anchor v1.0 (shipped January 2026, PR #4060) introduced `Migration<'info, From, 
 **layoutd is that codegen layer.** It is a small Rust CLI that takes two Anchor IDLs (or Rust source for zero-copy accounts where IDL is insufficient), computes a structured byte-level diff (added / removed / renamed / resized / reordered fields, byte offsets, alignment), and generates the `.migrate()` body for the safe transformation cases — append-at-end, widen, rename, reorder. It also emits a SARIF 2.1.0 safety report flagging zero-copy alignment hazards, data-loss risks, and CU-budget overruns, so layout-unsafe upgrades are caught in CI rather than in audit or in production.
 
 **Three commands:**
-- `layoutd diff old.json new.json` → structured diff (human + JSON).
-- `layoutd gen old.json new.json --out migrate.rs` → ready-to-merge `.migrate()` body.
-- `layoutd check old.json new.json --sarif out.sarif` → safety oracle for CI gating.
 
-Plus a published GitHub Action (`layoutd/action-check`) so any Anchor repo can drop in layout-safety enforcement in two lines of YAML.
+```bash
+layoutd diff old.json new.json                        # structured diff (human + JSON)
+layoutd gen  old.json new.json --out migrate.rs       # ready-to-merge .migrate() body
+layoutd check old.json new.json --sarif out.sarif     # safety oracle for CI gating
+```
+
+Plus a published GitHub Action (`layoutd/action-check`) so any Anchor repo can drop in layout-safety enforcement in two lines of YAML:
+
+```yaml
+- uses: layoutd/action-check@v1
+  with:
+    old-idl: idl/v1.json
+    new-idl: idl/v2.json
+```
 
 **Why this is the right fit for the India grant.** It is small in scope, sharply defined, ships in 6 weeks, has zero on-chain footprint, zero regulatory surface, and benefits every Indian (and global) team building production Anchor programs. The India ecosystem is heavy on protocol teams that are about to face their first migration — Superteam India builders are a direct first-user pool.
 
@@ -51,20 +61,38 @@ Plus a published GitHub Action (`layoutd/action-check`) so any Anchor repo can d
 
 A fully on-chain prediction market protocol built with Anchor/Rust. Three cross-program Anchor programs: Market Registry (lifecycle management), Escrow Vault (YES/NO token minting, SPL settlement), and Resolution Adapter (Pyth oracle + bonded dispute mechanism). 60+ test cases covering PDA derivation, CPI authorization, oracle proposals, and payout claims. Deployed to Solana devnet. This project required deep understanding of Anchor account layout, CPI, and the exact class of struct-level bugs that layoutd targets.
 
-**2. HydraMarket Frontend**
+---
+
+**2. HydraMarket — Hybrid Prediction Market Platform (Full-Stack Monorepo)**
 [github.com/Rudraprajapati2612/HydraMarket-Solana-Predection-Market-](https://github.com/Rudraprajapati2612/HydraMarket-Solana-Predection-Market-)
 
-React frontend for HydraMarket — wallet integration, real-time market state, trade execution, and payout claim UI. Full-stack Solana dApp engineering.
+A production-grade hybrid prediction market platform on Solana — half centralized for speed, half decentralized for trustless settlement. Seven services across a Turborepo/Bun monorepo (88% TypeScript, 10.6% Rust):
+
+- **API Gateway** (Bun + Elysia): JWT auth, balance management, order placement via gRPC to the Rust matching engine
+- **Matching Engine** (Rust + Tokio): In-memory order book with price-time priority, complementary YES/NO match detection, Redis queue dispatch for on-chain settlement
+- **Settlement Worker** (Rust): Pops `mint:queue`, transfers USDC to the Anchor escrow vault, mints YES/NO SPL token pairs on-chain, syncs PostgreSQL positions
+- **Withdrawal Worker** (Rust): Polls withdrawal table, executes USDC SPL transfers directly to user wallets, confirms on-chain
+- **Deposit Indexer** (TypeScript): WebSocket hot-wallet monitor, parses memo fields, credits user balances in real time
+- **Resolution Adapter** (TypeScript + node-cron): Hourly cron fetching Pyth (crypto) and RapidAPI (sports/cricket) oracle data, writes resolved outcomes to the on-chain Resolution Adapter program
+- **React Frontend**: Wallet integration, live order book, trade execution, position tracking, payout claim UI
+
+On-chain programs (Market Registry, Escrow Vault, Resolution Adapter) live in the companion [HydraMarket-Contract](https://github.com/Rudraprajapati2612/HydraMarket-Contract) repo. Building this required the exact systems-level depth that layoutd targets: Anchor account struct layout, CPI authorization chains, SPL token mechanics, and oracle-driven state transitions across a multi-language Rust + TypeScript production stack.
+
+---
 
 **3. Ferrum — HTTP Framework built from scratch in Rust**
 [github.com/Rudraprajapati2612/Ferrum](https://github.com/Rudraprajapati2612/Ferrum)
 
 A zero-dependency HTTP/1.1 web framework written entirely in Rust — raw TCP handling, manual byte parser, radix trie router, middleware chain, async I/O via Tokio. Benchmarks at 257,000–294,000 RPS. Built phase-by-phase as a deep systems learning exercise. Demonstrates the same low-level Rust discipline that layoutd's IDL parser and byte-diff engine requires.
 
+---
+
 **4. Central Limit Order Book in Rust**
 [github.com/Rudraprajapati2612/Central-limit-OrderBook-rust](https://github.com/Rudraprajapati2612/Central-limit-OrderBook-rust)
 
 A CLOB implementation in Rust — price-time priority matching engine, order management, bid/ask book. Core DeFi infrastructure built natively in Rust.
+
+---
 
 **5. AMM on Solana**
 [github.com/Rudraprajapati2612/amm-Solana](https://github.com/Rudraprajapati2612/amm-Solana)
@@ -76,8 +104,6 @@ Automated Market Maker implemented as an Anchor program on Solana — liquidity 
 ### Loom Video Pitch
 
 [https://www.loom.com/share/c8ef0c3c2fcf4cad8feba1036f40c254](https://www.loom.com/share/c8ef0c3c2fcf4cad8feba1036f40c254)
-
----
 
 ### Personal X Profile
 
@@ -142,7 +168,7 @@ Each milestone is paid on delivery of a public release (git tag + crates.io publ
 - [ ] Lock domain + deploy landing page at layoutd.dev.
 - [ ] Loom video recorded and linked above ✅
 - [ ] Telegram: RudraOnSolana ✅
-- [ ] Wallet: r8V9yov1eJcX7EDFxkSzqtiUSvSSfESGnjaYaaYk7Qu ✅
+- [ ] Wallet: `r8V9yov1eJcX7EDFxkSzqtiUSvSSfESGnjaYaaYk7Qu` ✅
 - [ ] Pick 3 candidate open-source Anchor repos for M4 case studies — email maintainers heads-up before submit.
 - [ ] Pre-submit DM to L0STE — share v0.1 link, ask for input.
 - [ ] Light heads-up to Paaru Sethi (Superteam India lead).

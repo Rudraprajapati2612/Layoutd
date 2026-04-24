@@ -56,28 +56,40 @@ Plus a published GitHub Action (`layoutd/action-check`) so any Anchor repo can d
 
 ### Proof of Work
 
- 
-Five shipped projects demonstrate the systems depth that `layoutd` requires:
- 
-### HydraMarket — On-Chain Prediction Market (Anchor/Rust)
+### HydraMarket — On-Chain Prediction Market Protocol
 [github.com/Rudraprajapati2612/HydraMarket-Contract](https://github.com/Rudraprajapati2612/HydraMarket-Contract)
-Three cross-program Anchor contracts (Market Registry, Escrow Vault, Resolution Adapter), 60+ test cases, deployed to devnet. Direct hands-on experience with Anchor account layout, CPI authorization, and the exact class of struct-level bugs `layoutd` targets.
+Three cross-program Anchor contracts: Market Registry (lifecycle), Escrow Vault (YES/NO SPL token minting + USDC settlement), and Resolution Adapter (Pyth oracle + bonded dispute). 60+ test cases covering PDA derivation, CPI authorization, oracle proposals, and payout claims. Deployed to Solana devnet. Direct hands-on experience with the exact class of account struct bugs `layoutd` targets.
  
-### HydraMarket — Full-Stack Hybrid DEX (Monorepo)
+### HydraMarket — Hybrid Prediction Market Platform (Full-Stack Monorepo)
 [github.com/Rudraprajapati2612/HydraMarket-Solana-Predection-Market-](https://github.com/Rudraprajapati2612/HydraMarket-Solana-Predection-Market-)
-Seven-service Turborepo/Bun monorepo — Rust matching engine (Tokio, gRPC), Rust settlement + withdrawal workers, TypeScript deposit indexer, Pyth + RapidAPI oracle resolution, React frontend. End-to-end production Rust + TypeScript DeFi stack.
+Seven-service Turborepo/Bun monorepo (88% TypeScript, 10.6% Rust): Rust matching engine (Tokio + gRPC, price-time priority), Rust settlement + withdrawal workers, TypeScript deposit indexer, Pyth + RapidAPI oracle resolution cron, and a React frontend with live order book and payout claim UI. End-to-end production Rust + TypeScript DeFi stack across the full trading → settlement → on-chain confirmation path.
  
 ### Ferrum — HTTP Framework in Rust (Zero Dependencies)
 [github.com/Rudraprajapati2612/Ferrum](https://github.com/Rudraprajapati2612/Ferrum)
-Raw TCP handling, manual byte parser, radix trie router, middleware chain, async Tokio. Benchmarks at 257k–294k RPS. The same low-level Rust discipline `layoutd`'s IDL parser and byte-diff engine requires.
+Raw TCP handling, manual byte parser, radix trie router, middleware chain, async Tokio. Benchmarks at 257k–294k RPS. Built phase-by-phase as a ground-up systems exercise — the same low-level Rust discipline `layoutd`'s IDL parser and byte-diff engine demands.
  
 ### Central Limit Order Book in Rust
 [github.com/Rudraprajapati2612/Central-limit-OrderBook-rust](https://github.com/Rudraprajapati2612/Central-limit-OrderBook-rust)
-Price-time priority matching engine, order management, bid/ask book — core DeFi infrastructure in native Rust.
+Price-time priority matching engine with full order management and bid/ask book — core DeFi infrastructure written in native Rust.
  
 ### AMM on Solana
 [github.com/Rudraprajapati2612/amm-Solana](https://github.com/Rudraprajapati2612/amm-Solana)
-Anchor-based AMM — liquidity pool management, swap execution, LP token minting. Foundational DeFi primitive on Solana.
+Anchor-based AMM with liquidity pool management, swap execution, and LP token minting. Foundational DeFi primitive, hands-on with Anchor account layout and SPL token mechanics.
+ 
+---
+
+### Loom Video Pitch
+
+[https://www.loom.com/share/c8ef0c3c2fcf4cad8feba1036f40c254](https://www.loom.com/share/c8ef0c3c2fcf4cad8feba1036f40c254)
+
+### Personal X Profile
+
+[x.com/0xRudraSol](https://x.com/0xRudraSol)
+
+### Personal GitHub Profile
+
+[github.com/Rudraprajapati2612](https://github.com/Rudraprajapati2612)
+
 ---
 
 ## 3. Milestones
